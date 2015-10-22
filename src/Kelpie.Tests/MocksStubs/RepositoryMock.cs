@@ -30,6 +30,16 @@ namespace Kelpie.Tests.MocksStubs
 			LogEntries = new List<LogEntry>();
         }
 
+		public int Count()
+		{
+			return 0;
+		}
+
+		public IEnumerable<LogEntry> GetAllEntries(int index, int rowCount)
+		{
+			return null;
+		}
+
 		public IEnumerable<LogEntry> GetEntriesForApp(string environment, string applicationName)
 		{
 			return null;
@@ -41,6 +51,11 @@ namespace Kelpie.Tests.MocksStubs
 		}
 
 		public IEnumerable<LogEntry> GetEntriesThisWeek(string environment, string applicationName)
+		{
+			return null;
+		}
+
+		public IEnumerable<LogEntry> GetEntriesSince(string environment, string applicationName, int numberOfDays)
 		{
 			return null;
 		}
@@ -63,6 +78,20 @@ namespace Kelpie.Tests.MocksStubs
 	    public LogEntry GetEntry(Guid id)
 		{
 			return null;
+		}
+
+		public IEnumerable<LogEntry> Search(string environment, string applicationName, string query)
+		{
+			return null;
+		}
+
+		public LatestLogFileInfo GetLatestLogFileInfo(string environment, string server, string appName)
+		{
+			return null;
+		}
+
+		public void SaveLatestLogFileInfo(LatestLogFileInfo latestLogFileInfo)
+		{
 		}
 	}
 }

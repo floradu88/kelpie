@@ -7,14 +7,17 @@ namespace Kelpie.Core.Console
 {
 	internal class Options
 	{
-		[Option('f', "copyfiles", Required = false, HelpText = "Copies all log files to the temp directory (%TEMP% or $env:TEMP in powershell), inside the 'kelpie' directory.")]
+		[Option('c', "copyfiles", Required = false, HelpText = "If true, copies all log files to the temp directory (%TEMP% or $env:TEMP in powershell), inside the 'kelpie' directory.")]
 		public bool CopyFiles { get; set; }
 
-		[Option('w', "wipedata", Required = false, HelpText = "Wipes all data from the MongoDB database before importing. Use this for performing a fresh import.")]
+		[Option('w', "wipedata", Required = false, HelpText = "If true, wipes all data from the MongoDB database before importing. Use this for performing a fresh import.")]
 		public bool WipeData { get; set; }
 
-		[Option('k', "skipimport", Required = false, HelpText = "Doesn't import any data to the database (usually used in conjunction with --copyfiles).")]
-		public bool SkipImport { get; set; }
+		[Option('i', "import", Required = false, HelpText = "If true, imports all data into the database (when false, this is usually used in conjunction with --copyfiles).")]
+		public bool Import { get; set; }
+
+		[Option('x', "index", Required = false, HelpText = "If true, performs a Lucene re-index from all the data in the database. Use this when using --import.")]
+		public bool Index { get; set; }
 
 		[Option('u', "smartupdate", Required = false, HelpText = "Only imports log entries in each application that are newer than any existing ones. If this is not set and you do not specify --wipedata, you will get duplicate log file entries.")]
 		public bool SmartUpdate { get; set; }
@@ -37,7 +40,10 @@ namespace Kelpie.Core.Console
 			};
 
 			help.AddOptions(this);
-			return help;
+
+			string exampleUsage = string.Format("{0}Example usage:{0} kelpie.exe --copyfiles --import{0}", System.Environment.NewLine);
+
+			return help + exampleUsage;
 		}
 	}
 }

@@ -1,0 +1,53 @@
+﻿@model IEnumerable<LogEntry>
+@{
+    ViewBag.Title = "Search logs using Kelpie app.";
+}
+
+<span class="lozenge">@ViewBag.EnvironmentName</span>
+<h2 class="application-name">@ViewBag.ApplicationName</h2>
+
+<div class="row">
+	<h5>Search results for "@ViewBag.SearchQuery"</h5>
+
+	<div id="results">
+		@if (Model.Any())
+		{
+			<table class="errors">
+				<thead>
+					<tr>
+						<th>Time</th>
+						<th>Message</th>
+						<th>Exception</th>
+						<th>Server</th>
+						<th></th>
+					</tr>
+				</thead>
+
+				<tbody>
+					@foreach (LogEntry logEntry in Model)
+					{
+						<tr id="@logEntry.Id">
+							<td class="error-time">@logEntry.DateTime.ToString()</td>
+							<td class="error-message">@logEntry.TruncatedMessage</td>
+							<td>@logEntry.ExceptionType</td>
+							<td class="error-server">@logEntry.Server</td>
+							<td><a href="javascript:;" class="expand"><i class="tiny material-icons">code</i></a></td>
+						</tr>
+						<tr class="hide">
+							<td colspan="4"><pre class="message"></pre></td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+		else
+		{
+			<h6>No results found.</h6>
+		}
+	</div>
+</div>
+
+@section AdditionalNav
+{
+	@Html.Partial("AppNavigation")
+}

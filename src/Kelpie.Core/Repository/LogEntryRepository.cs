@@ -22,6 +22,11 @@ namespace Kelpie.Core.Repository
             _collection = _database.GetCollection<LogEntry>("LogEntry");
         }
 
+	    public int Count()
+	    {
+		    return _collection.AsQueryable().Count();
+	    }
+
         public void Save(LogEntry entry)
         {
             _collection.InsertOneAsync(entry);
@@ -38,7 +43,12 @@ namespace Kelpie.Core.Repository
             DropDatabase("Kelpie");
         }
 
-        public async void DropDatabase(string databaseName = "Kelpie")
+	    public IEnumerable<LogEntry> GetAllEntries(int index, int rowCount)
+	    {
+		    return _collection.AsQueryable().Skip(index).Take(rowCount).ToList();
+	    }
+
+	    public async void DropDatabase(string databaseName = "Kelpie")
         {
             await _mongoClient.DropDatabaseAsync(databaseName);
         }
@@ -74,7 +84,18 @@ namespace Kelpie.Core.Repository
             return items.ToList().OrderByDescending(x => x.DateTime);
         }
 
-        public IEnumerable<IGrouping<string, LogEntry>> GetEntriesThisWeekGroupedByException(string environment, string applicationName)
+		public IEnumerable<LogEntry> GetEntriesSince(string environment, string applicationName, int numberOfDays)
+		{
+			var items =
+				_collection.AsQueryable<LogEntry>()
+					.Where(x => x.Environment.Equals(environment)
+								&& x.ApplicationName.Equals(applicationName)
+								&& x.DateTime > DateTime.Today.AddDays(-numberOfDays));
+
+			return items.ToList().OrderByDescending(x => x.DateTime);
+		}
+
+		public IEnumerable<IGrouping<string, LogEntry>> GetEntriesThisWeekGroupedByException(string environment, string applicationName)
         {
             var items =
                 _collection.AsQueryable<LogEntry>()
@@ -103,8 +124,6 @@ namespace Kelpie.Core.Repository
             return _collection.AsQueryable<LogEntry>().FirstOrDefault(x => x.Id == id);
         }
 
-
-
         public IEnumerable<LogEntry> GetFilterEntriesForApp(LogEntryFilter filter)
         {
             if (!filter.Page.HasValue || filter.Page.Value < 1)
@@ -128,5 +147,40 @@ namespace Kelpie.Core.Repository
                 .Skip((filter.Page.Value - 1) * filter.Rows.Value)
                 .Take(filter.Rows.Value);
         }
+
+		public IEnumerable<LogEntry> Search(string environment, string applicationName, string query)
+		{
+			if (string.IsNullOrEmpty(query))
+				return new List<LogEntry>();
+
+			query = query.ToLowerInvariant();
+
+			var items =
+				_collection.AsQueryable<LogEntry>()
+					.Where(x => x.Environment.Equals(environment)
+							&& x.ApplicationName.Equals(applicationName)
+							&& x.DateTime > DateTime.Today.AddDays(-_configuration.MaxAgeDays)
+							&& x.ExceptionType.ToLower().Contains(query) || x.Message.ToLower().Contains(query)); // Add "x.ExceptionMessage.ToLower().Contains(query)" ?
+
+			// We could add paging here, but it's probably overkill
+			return items.ToList()
+						.OrderByDescending(x => x.DateTime)
+						.Take(50);
+		}
+
+	    public LatestLogFileInfo GetLatestLogFileInfo(string environment, string server, string appName)
+	    {
+		    var collection = _database.GetCollection<LatestLogFileInfo>("LatestLogFileInfo");
+
+		    string id = LatestLogFileInfo.GenerateId(environment, server, appName);
+            return collection.AsQueryable<LatestLogFileInfo>().FirstOrDefault(x => x.Id == id);
+	    }
+
+	    public void SaveLatestLogFileInfo(LatestLogFileInfo latestLogFileInfo)
+	    {
+		    var collection = _database.GetCollection<LatestLogFileInfo>("LatestLogFileInfo");
+
+			collection.ReplaceOneAsync(info => info.Id.Equals(latestLogFileInfo.Id), latestLogFileInfo, new UpdateOptions() { IsUpsert = true});
+		}
     }
 }

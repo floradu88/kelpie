@@ -1,11 +1,11 @@
 ﻿@model IEnumerable<LogEntry>
 @{
-	ViewBag.Title = "This week's log entries for " + ViewBag.ApplicationName;
+	ViewBag.Title = "Todays log entries for " + ViewBag.ApplicationName;
 }
 
 <span class="lozenge">@ViewBag.EnvironmentName</span>
 <h2 class="application-name">@ViewBag.ApplicationName</h2>
-<h5>This week</h5>
+<h5>@ViewBag.ExceptionType</h5>
 
 <div class="row">
 	@Html.Partial("EntriesForDay", LogEntriesForDay.Create(Model, DateTime.Today))
@@ -19,9 +19,7 @@
 
 @section AdditionalNav
 {
-	<li><a href="@Url.Action("Today", "Home", new { applicationName = @ViewBag.ApplicationName })">Today</a></li>
-	<li><a href="@Url.Action("ThisWeek", "Home", new {applicationName = @ViewBag.ApplicationName})">This week</a></li>
-	<li><a href="@Url.Action("AllExceptionTypes", "Home", new { applicationName = @ViewBag.ApplicationName })">Exceptions</a></li>
+	@Html.Partial("AppNavigation")
 }
 
 @section scripts

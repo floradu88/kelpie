@@ -57,8 +57,13 @@
       <HintPath>..\..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Kelpie.Core">
-      <HintPath>..\Kelpie.Web\Bin\Kelpie.Core.dll</HintPath>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Lucene.Net.3.0.3\lib\NET40\Lucene.Net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="MongoDB.Bson, Version=2.1.0.124, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MongoDB.Bson.2.1.0-rc0\lib\net45\MongoDB.Bson.dll</HintPath>
@@ -80,6 +85,8 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -100,12 +107,16 @@
     <Compile Include="Import\ServerLogFileContainer.cs" />
     <Compile Include="Import\LogReaderOptions.cs" />
     <Compile Include="Import\PinvokeWindowsNetworking.cs" />
-    <Compile Include="KelpieException.cs" />
-    <Compile Include="Import\Parser\LogFileParser.cs" />
-    <Compile Include="Repository\ILogEntryRepository.cs" />
+    <Compile Include="Exceptions\InvalidConfigurationFileException.cs" />
+    <Compile Include="Exceptions\KelpieException.cs" />
+    <Compile Include="Import\Parser\DefaultNLogFormatParser.cs" />
+    <Compile Include="Domain\ILogEntryRepository.cs" />
+    <Compile Include="Repository\LatestLogFileInfo.cs" />
     <Compile Include="Repository\LogEntryRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Import\FileSystemLogReader.cs" />
+    <Compile Include="Exceptions\SearchException.cs" />
+    <Compile Include="Repository\SearchRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

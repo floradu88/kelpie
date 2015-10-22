@@ -22,7 +22,7 @@
 			{
 				<tr id="@logEntry">
 					<td class="error-time">@logEntry.Count()</td>
-					<td class="error-message"><a href="@Url.Action("ExceptionType", "Home", new { applicationName = @ViewBag.ApplicationName, exceptionType = logEntry.Key})">@logEntry.Key</a></td>
+					<td class="error-message"><a href="@Url.Action("ExceptionType", "App", new { applicationName = @ViewBag.ApplicationName, exceptionType = logEntry.Key})">@logEntry.Key</a></td>
 					<td class="error-server"></td>
 				</tr>
 				<tr class="hide">
@@ -35,7 +35,5 @@
 
 @section AdditionalNav
 {
-	<li><a href="@Url.Action("Today", "Home", new { applicationName = @ViewBag.ApplicationName })">Today</a></li>
-	<li><a href="@Url.Action("ThisWeek", "Home", new {applicationName = @ViewBag.ApplicationName})">This week</a></li>
-	<li><a href="@Url.Action("AllExceptionTypes", "Home", new { applicationName = @ViewBag.ApplicationName })">Exceptions</a></li>
+	@Html.Partial("AppNavigation")
 }

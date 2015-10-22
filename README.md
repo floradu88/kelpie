@@ -6,7 +6,7 @@ Scans NLog *text* log files and displays them in a filterable way in an MVC appl
 - Make sure you have IIS installed
 - Install MongoDB: https://www.mongodb.org/downloads
 - Create `c:\mongodb\data\db`
-- Run `setupMongoDb.ps1`
+- Run `start-mongodb.ps1`
   - Or install it as a service: https://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows/#configure-a-windows-service-for-mongodb
 - Run the setup.ps1 script.
 - Update the app.config and web.config files with the servers and applications you want.
@@ -67,40 +67,9 @@ An example config is below. Things to note:
 			]
 		}
 
-## Roadmap
+### Performance, scaling and the ImportBufferSize settings
+Kelpie has been test with duplicated data creating an 11gb MongoDB data directory. This was with 10+ apps per server with 1gb of data per server (around 5gb of log files in total.) 
 
-### Iteration 1 (Done)
-1. Reads all files from directories (using async)
-2. Table of logs for today
-3. Table of logs for this week
-4. Show error messages in detail
-5. Rescan all logs
+The server was a VM dual core with 8gb of ram - the performance was ok, although indexing with lucene with this amount of data is very slow.
 
-### Iteration 1.1 (Done)
-1. Remove RavenDB and put MongoDB there.
-
-### Iteration 2 (Done)
-1. Count of common exceptions for today and this week
-2. Drill down into common exceptions
-
-### Iteration 2.1 (Done)
-1. Decent configuration from a JSON .config file.
-
-### Iteration 2.2 (Done)
-1. Environments
-
-### Iteration 3
-1. Import tool improvements: --update, --copyfiles to only copy files.
-
-### Iteration 4
-2. Smart re-scanning, journaling the last scan time for each app and server.
-
-### Iteration 5
-1. Search messages
-
-### Iteration 6
-1. Improvements to the dashboard to show server with most errors, removing the average.
-2. Totals for each day.
-
-### Iteration 7
-1. Paging
+It's recommended you keep your log files rotating and small with Kelpie - over 250mb per log file will work but will be slow to index and search. With large log file sizes you have to tweak the 'ImportBufferSize' setting or the import tool will throw `OutOfMemoryExceptions` due to the 2gb limitations with the heap size in .NET. If your log files are only 5-10mb then you can set this to a high number, around 500-1000 which greatly speeds up imports.
